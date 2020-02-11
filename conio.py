@@ -50,7 +50,7 @@ if os.name== 'nt':
         finally:
             pass
 
-    def wait_keypress(timeout):    
+    def wait_keypress(timeout):
         return wait_keypress_until( time.time() + timeout )
 
     def wait_keypress_until(end_time):
@@ -93,27 +93,6 @@ if os.name== 'nt':
 
 else: # posix
     import termios,select
-    #def prepare_tty(): 
-    #    """set the terminal in char mode (return each keyboard press at once) and
-    #    switch off echoing of this input; return the original settings"""
-    #    stdin_fd = sys.stdin.fileno()  # will most likely be 0  ;->
-    #    old_stdin_config = termios.tcgetattr(stdin_fd)
-    #    [ iflag, oflag, cflag, lflag, ispeed, ospeed, cc ] = termios.tcgetattr(stdin_fd)
-    #    cc[termios.VTIME] = 1
-    #    cc[termios.VMIN] = 1
-    #    iflag = iflag & ~(termios.IGNBRK | termios.BRKINT | termios.PARMRK | termios.ISTRIP | termios.INLCR | termios.IGNCR | termios.IXON) #termios.ICRNL 
-    #    #  oflag = oflag & ~termios.OPOST
-    #    cflag = cflag | termios.CS8
-    #    lflag = lflag & ~(termios.ECHO | termios.ECHONL | termios.ICANON |  termios.IEXTEN) # termios.ISIG
-    #    termios.tcsetattr(stdin_fd, termios.TCSANOW, [ iflag, oflag, cflag, lflag, ispeed, ospeed, cc ])
-    #    return (stdin_fd, old_stdin_config)
-
-    #def prepare_tty():  
-    #    global original_tty_settings
-
-    #    fd = sys.stdin.fileno()
-    #    original_tty_settings = termios.tcgetattr(fd)
-    #    tty.setraw(fd)
 
     @contextlib.contextmanager
     def conio(ansi=True):
@@ -128,16 +107,6 @@ else: # posix
             yield
         finally:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSAFLUSH, original_tty_settings)
-
-
-    #def cleanup_tty(original_tty_settings):  
-    #    """restore the original terminal settings"""
-    #    stdin_fd, old_stdin_config = original_tty_settings
-    #    termios.tcsetattr(stdin_fd, termios.TCSADRAIN, old_stdin_config)
-
-    #def cleanup_tty(): 
-    #    termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, original_tty_settings)
-
 
     def kbhit():
         (r, w, e) = select.select([sys.stdin], [], [], 0)
@@ -168,7 +137,6 @@ else: # posix
         '24': 'f12',
     }
     def getch():
-        #return os.read(sys.stdin.fileno(), 1).decode("utf-8")
         ch = sys.stdin.read(1)
         if ch == '\x1b':
             ch = sys.stdin.read(2) # first char is always '[' or 'O'
@@ -183,22 +151,7 @@ else: # posix
                 return keymap[ch]
             return "1b" + ch
         return ch
-        
-# def get_next_character(f):
-  # # note: assumes valid utf-8
-  # c = f.read(1)
-  # while c:
-    # while True:
-      # try:
-        # yield c.decode('utf-8')
-      # except UnicodeDecodeError:
-        # # we've encountered a multibyte character
-        # # read another byte and try again
-        # c += f.read(1)
-      # else:
-        # # c was a valid char, and was yielded, continue
-        # c = f.read(1)
-        # break
+
 
     def wait_keypress(timeout):
         (r, w, e) = select.select([sys.stdin], [], [], timeout)
@@ -211,13 +164,6 @@ else: # posix
         return wait_keypress(timeout)
 
 if __name__ == "__main__":
-    #with console_io():
-    #    while True:
-    #        key = getch()
-    #        print(key)
-    #        if key=='q':
-    #            break
-
     with conio():
         while True:
             if wait_keypress(1):

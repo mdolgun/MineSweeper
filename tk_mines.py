@@ -10,7 +10,7 @@ class TkGame(Game):
     def rclick(self,e):
         self.mark(e.y//self.h, e.x//self.w)  
         
-    def __init__(self,rows,cols,n_mines):
+    def __init__(self,n_rows,n_cols,n_mines):
         self.root = tk.Tk()
         # import images
         self.tiles = {x : tk.PhotoImage(file = "20x20/"+str(x)+".png") for x in range(9) }
@@ -20,11 +20,11 @@ class TkGame(Game):
         self.w = self.tiles[0].width()
         self.h = self.tiles[0].height()
 
-        self.canvas = tk.Canvas(self.root, height=self.h*rows, width=self.w*cols, highlightthickness=0)
+        self.canvas = tk.Canvas(self.root, height=self.h*n_rows, width=self.w*n_cols, highlightthickness=0)
         self.canvas.pack()
 
         menubar = tk.Menu(self.root)
-        menubar.add_command(label="New", command=lambda: self.init(self.rows,self.cols,self.n_mines))
+        menubar.add_command(label="New", command=lambda: self.init_board(self.n_rows,self.n_cols,self.n_mines))
         menubar.add_command(label="Quit", command=self.root.destroy)
         self.root.config(menu=menubar)
 
@@ -34,12 +34,12 @@ class TkGame(Game):
         self.canvas.bind('<Button-1>', lambda event: self.lclick(event))
         self.canvas.bind('<Button-3>', lambda event: self.rclick(event))
 
-        self.init_board(rows,cols,n_mines)
+        self.init_board(n_rows,n_cols,n_mines)
         
-    def init_board(self,rows,cols,n_mines):
-        super().init_board(rows,cols,n_mines)
-        for i in range(rows):
-            for j in range(cols):
+    def init_board(self,n_rows,n_cols,n_mines):
+        super().init_board(n_rows,n_cols,n_mines)
+        for i in range(n_rows):
+            for j in range(n_cols):
                 self.canvas.create_image(i*self.w, j*self.h, image=self.tiles['normal'], anchor=tk.NW)
 
 
